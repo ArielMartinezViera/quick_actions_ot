@@ -1,0 +1,11 @@
+name: quick_actions_example
+description: Demonstrates how to use the quick_actions plugin.
+
+dependencies:
+  flutter:
+    sdk: flutter
+  quick_actions_ot:
+    path: ../
+
+flutter:
+  uses-material-design: true
