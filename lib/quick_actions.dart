@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 const MethodChannel _kChannel =
-    MethodChannel('plugins.flutter.io/quick_actions');
+    MethodChannel('plugins.flutter.io/quick_actions_ot');
 
 /// Handler for a quick action launch event.
 ///
