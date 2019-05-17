@@ -44,7 +44,8 @@ public class QuickActionsPlugin implements MethodCallHandler {
     /**
      * Plugin registration.
      *
-     * <p>Must be called when the application is created.
+     * <p>
+     * Must be called when the application is created.
      */
     public static void registerWith(Registrar registrar) {
         channel = new MethodChannel(registrar.messenger(), "plugins.flutter.io/quick_actions_ot");
@@ -59,15 +60,15 @@ public class QuickActionsPlugin implements MethodCallHandler {
     public static void bindActivity(Class startActivityClass, Intent intent) {
         QuickActionsPlugin.startActivityClass = startActivityClass;
         type = intent.getStringExtra("type");
-//        Log.w("bindActivity", "************");
-//        Log.w("type", type+"");
-//        Log.w("isReadyCallLaunch", isReadyCallLaunch+"");
+        // Log.w("bindActivity", "************");
+        // Log.w("type", type+"");
+        // Log.w("isReadyCallLaunch", isReadyCallLaunch+"");
         if (isReadyCallLaunch) {
             callFlutter();
         }
     }
 
-    public static void unBindActivity(){
+    public static void unBindActivity() {
         isReadyCallLaunch = false;
     }
 
@@ -81,20 +82,19 @@ public class QuickActionsPlugin implements MethodCallHandler {
             return;
         }
         Context context = registrar.context();
-        ShortcutManager shortcutManager =
-                (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
+        ShortcutManager shortcutManager = (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
         switch (call.method) {
-            case "setShortcutItems":
-                List<Map<String, String>> serializedShortcuts = call.arguments();
-                List<ShortcutInfo> shortcuts = deserializeShortcuts(serializedShortcuts);
-                shortcutManager.setDynamicShortcuts(shortcuts);
-                break;
-            case "clearShortcutItems":
-                shortcutManager.removeAllDynamicShortcuts();
-                break;
-            default:
-                result.notImplemented();
-                return;
+        case "setShortcutItems":
+            List<Map<String, String>> serializedShortcuts = call.arguments();
+            List<ShortcutInfo> shortcuts = deserializeShortcuts(serializedShortcuts);
+            shortcutManager.setDynamicShortcuts(shortcuts);
+            break;
+        case "clearShortcutItems":
+            shortcutManager.removeAllDynamicShortcuts();
+            break;
+        default:
+            result.notImplemented();
+            return;
         }
         result.success(null);
     }
@@ -109,8 +109,7 @@ public class QuickActionsPlugin implements MethodCallHandler {
             String title = shortcut.get("localizedTitle");
             ShortcutInfo.Builder shortcutBuilder = new ShortcutInfo.Builder(context, type);
             if (icon != null) {
-                int resourceId =
-                        context.getResources().getIdentifier(icon, "drawable", context.getPackageName());
+                int resourceId = context.getResources().getIdentifier(icon, "drawable", context.getPackageName());
                 if (resourceId > 0) {
                     shortcutBuilder.setIcon(Icon.createWithResource(context, resourceId));
                 }
@@ -118,7 +117,7 @@ public class QuickActionsPlugin implements MethodCallHandler {
             shortcutBuilder.setLongLabel(title);
             shortcutBuilder.setShortLabel(title);
             Intent intent = new Intent(context, startActivityClass);
-            intent.setAction("plugins.flutter.io/quick_action");
+            intent.setAction("plugins.flutter.io/quick_actions_ot");
             intent.putExtra("type", type);
             shortcutBuilder.setIntent(intent);
             shortcutInfos.add(shortcutBuilder.build());
@@ -135,14 +134,15 @@ public class QuickActionsPlugin implements MethodCallHandler {
     public static void callFlutter() {
         if (channel != null && type != null && !type.isEmpty()) {
             channel.invokeMethod("launch", type);
-//            Log.w("call","invokeMethod");
+            // Log.w("call","invokeMethod");
         }
     }
 
     /**
      * Handle the shortcut and immediately closes the activity.
      *
-     * <p>Needs to be invocable by Android system; hence it is public.
+     * <p>
+     * Needs to be invocable by Android system; hence it is public.
      */
     public static class ShortcutHandlerActivity extends Activity {
 

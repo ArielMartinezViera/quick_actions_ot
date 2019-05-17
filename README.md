@@ -10,6 +10,22 @@ Shortcuts](https://developer.android.com/guide/topics/ui/shortcuts.html) APIs on
 Android (introduced in Android 7.1 / API level 25). It is safe to run this plugin
 with earlier versions of Android as it will produce a noop.
 
+## Need add
+
+In ios/Runner/AppDelegate.swift, need add the next code:
+
+```swift
+  @available(iOS 9.0, *)
+  override func application(
+    _ application: UIApplication,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
+    completionHandler: @escaping (Bool) -> Void) {
+    let controller = window.rootViewController as? FlutterViewController
+    let channel = FlutterMethodChannel(name: "plugins.flutter.io/quick_actions_ot", binaryMessenger: controller!)
+    channel.invokeMethod("launch", arguments: shortcutItem.type)
+  }
+```
+
 ## Usage in Dart
 
 Initialize the library early in your application's lifecycle by providing a
